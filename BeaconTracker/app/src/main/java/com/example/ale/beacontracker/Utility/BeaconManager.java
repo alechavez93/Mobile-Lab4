@@ -54,6 +54,11 @@ public class BeaconManager {
         }
     }
 
+    //Stops listening to Beacons
+    public void stopListening(Beacon beacon){
+        RequestAPI.sendDeleteRequest(serverUrl, beacon.getParamMap());
+    }
+
 
     //Helper functions
     private void sendToServer(Beacon beacon){

@@ -25,14 +25,16 @@ public class Beacon {
     public String getUUID() { return UUID; }
     public String getUrl() { return url; }
 
-    //Setters
-    public void setUrl(String url) { this.url = url; }
     public HashMap<String, String> getParamMap(){
         HashMap<String, String> params = new HashMap<>();
         params.put("UUID",UUID);
         if(url!=null) params.put("URL", url);
         return params;
     }
+
+    //Setters
+    public void setUrl(String url) { this.url = url; }
+
 
     //Comparators
     public boolean equals(Beacon beacon){ return UUID.equals(beacon.getUUID()); }
