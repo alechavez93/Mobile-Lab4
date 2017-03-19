@@ -6,8 +6,3 @@
 *node_modules
 *bower_components
 .mongo
-
-
-# Transpiled JS and Map Files
-*.js
-*.map
