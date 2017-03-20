@@ -18,7 +18,7 @@ var internals = require(path.join(__dirname, 'internals'));
 var api = require("./appAPI");
 
 // -- Setup the application
-api(app);
+api.run(app);
 setupExpress();
 setupSocket();
 
