@@ -15,9 +15,12 @@ var path      = require('path');
 var conf      = require(path.join(__dirname, 'config'));
 var internals = require(path.join(__dirname, 'internals'));
 
+var api = require("./appAPI");
+
 // -- Setup the application
 setupExpress();
 setupSocket();
+api();
 
 
 // -- Socket Handler
