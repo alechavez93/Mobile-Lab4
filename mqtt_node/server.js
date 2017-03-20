@@ -129,6 +129,9 @@ function setupSocket() {
 
 	// Setup the internals
 	internals.start(mqtt => {
+		//Initialize API with mqtt objetc
+		api.init(mqtt);
+		
 		io.on('connection', socket => {
 			socket_handler(socket, mqtt)
 		});

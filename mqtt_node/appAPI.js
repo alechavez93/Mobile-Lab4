@@ -5,6 +5,11 @@ const appEndpoint = "/beaconTracker";
 
 //If you wanna call or use mqtt
 var mqttManage = require("./mqtt");
+var mqtt;
+
+exports.init = function(externalMqtt){
+    mqtt = externalMqtt;
+}
 
 
 //Restful API to communicate with the Android App
@@ -34,11 +39,11 @@ exports.run = function (app) {
 };
 
 //In case a Client Requests the list of Beacons
-exports.getBeacons = function(mqtt){
+exports.getBeacons = function(){
     return beaconsList;
 }
 
-exports.getBeacon = function(UUID, mqtt){
+exports.getBeacon = function(UUID){
     for(var beacon of beaconsList){
         if(beacon.UUID == UUID)
             return beacon;
@@ -46,7 +51,15 @@ exports.getBeacon = function(UUID, mqtt){
     return null;
 }
 
-exports.addBeacon = function(beacon, mqtt){
+exports.getBeaconByTopic = function(topic){
+    for(var beacon of beaconsList){
+        if(beacon.topic == topic)
+            return beacon;
+    }
+    return null;
+}
+
+exports.addBeacon = function(beacon){
     if(beacon.constructor.name != "Beacon")
         throw new Error("Function addBeacon() takes a Beacon object as parameter");
     //If we don't have that Beacon yet
