@@ -29,12 +29,13 @@ const appEndpoint = "/beaconTracker";
 //Restful API to communicate with the Android App
 module.exports = function (app) {
 
-    app.get(appEndpoint, getHandler(req, res));
-    app.post(appEndpoint, postHandler(req, res));
-    app.put(appEndpoint, putHandler(req, res));
-    app.delete(appEndpoint, deleteHandler(req, res));
+    app.get(appEndpoint, getHandler);
+    app.post(appEndpoint, postHandler);
+    app.put(appEndpoint, putHandler);
+    app.delete(appEndpoint, deleteHandler);
 
     function getHandler(req, res) {
+        res.send("Hello");
         console.log("GET called");
     }
 
