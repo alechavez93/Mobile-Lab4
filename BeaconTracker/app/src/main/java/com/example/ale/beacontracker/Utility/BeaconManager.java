@@ -1,7 +1,9 @@
 /*--------------------------------------------------------------------------------------
 |	BeaconManager Class: Created by Alejandro Chavez on 3/19/2017.
 |---------------------------------------------------------------------------------------
-|   Description: Records Beacons and transmits to server.
+|   Description: Records Beacons and transmits to server. We are using the localhost for
+|   testing purposes and to demo the lab (in the real world we would have a server url for
+|   that reason).
 ---------------------------------------------------------------------------------------*/
 
 package com.example.ale.beacontracker.Utility;
@@ -19,7 +21,7 @@ public class BeaconManager {
     //Constructors
     public BeaconManager(){
         recorded = new HashSet<>();
-        serverUrl = "https://123.23.434.89:8080";
+        serverUrl = "http://localhost:8080/beaconTracker";
     }
 
     public BeaconManager(String serverUrl){

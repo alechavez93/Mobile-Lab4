@@ -43,7 +43,7 @@ exports.getBeacon = function(UUID){
     return null;
 }
 
-exports.addBeacon = function addBeacon(beacon){
+exports.addBeacon = function(beacon){
     if(beacon.constructor.name != "Beacon")
         throw new Error("Function addBeacon() takes a Beacon object as parameter");
     //If we don't have that Beacon yet
