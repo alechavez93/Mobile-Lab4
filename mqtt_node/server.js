@@ -16,11 +16,14 @@ var conf      = require(path.join(__dirname, 'config'));
 var internals = require(path.join(__dirname, 'internals'));
 
 var api = require("./appAPI");
+var mqttManager = require("./mqtt");
 
 // -- Setup the application
 api.run(app);
 setupExpress();
 setupSocket();
+
+//NOTE: to use mqttManage just call mqttManage.publishMaxCapacity(topic, mqtt) wherever you need it =)
 
 
 // -- Socket Handler
