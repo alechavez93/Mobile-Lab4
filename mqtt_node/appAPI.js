@@ -52,6 +52,38 @@ exports.addBeacon = function(beacon){
 }
 
 
+//===================================================================================
+// for publishing to the embed system
+var mqtt;
+
+//subscription allowed
+var topics = ["position1", "position2", "position3", "position4"];
+var MAX_CAP_MES = "red";
+var NO_MAX_CAP_MES = "off";
+
+function publishMaxCapacity(topic){
+    var newPacket = {
+        topic: topic,
+        payload: MAX_CAP_MES,
+        retain: false,
+        qos: 0
+    };
+    mqtt.publish(newPacket);
+}
+
+function publishOffMaxCapacity(topic){
+    var newPacket = {
+        topic: topic,
+        payload: NO_MAX_CAP_MES,
+        retain: false,
+        qos: 0
+    };
+    mqtt.publish(newPacket);
+}
+//===================================================================================
+
+
+
 // Tests
 exports.test = function(){
     var beacon1 = new Beacon("1234", "lat:1234, long:2345");
