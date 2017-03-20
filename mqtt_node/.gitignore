@@ -1,6 +1,7 @@
 # WebStorm specific files #
 .idea
 /.idea
+config.js
 
 # Node Package Dependencies
 *node_modules
