@@ -42,10 +42,10 @@ public class ScannerBeacon
     {
         if (!checkBluetooth()) {
             requestUserBluetooth();
-            //mainActivity.stopScan();
+            mainActivity.stopScan();
         }
         else {
- //           scanLeDevice(true);
+            scanLeDevice(true);
         }
     }
 
@@ -65,7 +65,7 @@ public class ScannerBeacon
     }
 
     public void stop() {
- //       scanLeDevice(false);
+        scanLeDevice(false);
     }
 
     // If you want to scan for only specific types of peripherals,

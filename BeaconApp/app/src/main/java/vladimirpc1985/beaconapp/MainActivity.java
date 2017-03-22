@@ -21,7 +21,7 @@ public class MainActivity extends AppCompatActivity {
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //testCommunication();
+        testCommunication();
         System.out.print("In onCreate!");
 
 
@@ -33,9 +33,9 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-  //      scannerBeacon = new ScannerBeacon(this, 5000, -75);
+        scannerBeacon = new ScannerBeacon(this, 5000, -75);
         System.out.print("Before call startScan()");
-        //startScan();
+        startScan();
     }
 
     public static void testCommunication()
