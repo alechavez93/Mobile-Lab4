@@ -3,6 +3,7 @@ package vladimirpc1985.beaconapp.Utility;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.le.ScanCallback;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -32,11 +33,7 @@ public class ScannerBeacon
         mHandler = new Handler();
 
         final BluetoothManager bluetoothManager = (BluetoothManager) mainActivity.getSystemService(Context.BLUETOOTH_SERVICE);
-//        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR2) {
-            mBluetoothAdapter = bluetoothManager.getAdapter();
-//        } else {
-//            mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-//        }
+        mBluetoothAdapter = bluetoothManager.getAdapter();
 
     }
 
@@ -45,14 +42,15 @@ public class ScannerBeacon
     {
         if (!checkBluetooth()) {
             requestUserBluetooth();
-            mainActivity.stopScan();
+            //mainActivity.stopScan();
         }
         else {
-            scanLeDevice(true);
+ //           scanLeDevice(true);
         }
     }
 
     public boolean checkBluetooth() {
+        System.out.print("The mBluetoothAdapter is: " + mBluetoothAdapter);
         // Ensures Bluetooth is available on the device and it is enabled. If not,
         // displays a dialog requesting user permission to enable Bluetooth.
         if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled())
@@ -67,7 +65,7 @@ public class ScannerBeacon
     }
 
     public void stop() {
-        scanLeDevice(false);
+ //       scanLeDevice(false);
     }
 
     // If you want to scan for only specific types of peripherals,
@@ -84,18 +82,24 @@ public class ScannerBeacon
                     Utils.toast(mainActivity.getApplicationContext(), "Stopping BLE scan...");
 
                     mScanning = false;
-                    mBluetoothAdapter.stopLeScan(mLeScanCallback);
+                    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        mBluetoothAdapter.getBluetoothLeScanner().stopScan((ScanCallback) mLeScanCallback);
+                    }
 
                     mainActivity.stopScan();
                 }
             }, scanPeriod);
 
             mScanning = true;
-            mBluetoothAdapter.startLeScan(mLeScanCallback);
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                mBluetoothAdapter.getBluetoothLeScanner().startScan((ScanCallback) mLeScanCallback);
+            }
         }
         else {
             mScanning = false;
-            mBluetoothAdapter.stopLeScan(mLeScanCallback);
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                mBluetoothAdapter.getBluetoothLeScanner().stopScan((ScanCallback) mLeScanCallback);
+            }
         }
     }
 

@@ -21,7 +21,8 @@ public class MainActivity extends AppCompatActivity {
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        testCommunication();
+        //testCommunication();
+        System.out.print("In onCreate!");
 
 
         // Use this check to determine whether BLE is supported on the device. Then
@@ -32,8 +33,9 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-        scannerBeacon = new ScannerBeacon(this, 5000, -75);
-        startScan();
+  //      scannerBeacon = new ScannerBeacon(this, 5000, -75);
+        System.out.print("Before call startScan()");
+        //startScan();
     }
 
     public static void testCommunication()

@@ -30,7 +30,7 @@ public class BeaconManager {
     }
 
 
-    //Beacon Listeners with Overloaded parameters for your convenience
+    //Beacon Listeners with Overloaded parameters
     public void listenToBeacon(String UUID){
         if(isBeaconInProject(UUID)){
             sendToServer(new Beacon(UUID));
