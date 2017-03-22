@@ -3,7 +3,7 @@
 // var mqtt; NOTE: your mqtt object will need to be passed as parameter to your functions (this is called dependecy injection)
 
 //subscription allowed
-var topics = ["position1", "position2", "position3", "position4"];
+exports.topics = ["position1", "position2", "position3", "position4"];
 var MAX_CAP_MES = "red";
 var NO_MAX_CAP_MES = "off";
 

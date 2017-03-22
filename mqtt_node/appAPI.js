@@ -4,12 +4,12 @@ var beaconsList = [];
 const appEndpoint = "/beaconTracker";
 
 //If you wanna call or use mqtt
-var mqttManage = require("./mqtt");
+var mqttManager = require("./mqtt");
 var mqtt;
 
 exports.init = function(externalMqtt){
     mqtt = externalMqtt;
-}
+};
 
 
 //Restful API to communicate with the Android App
@@ -20,20 +20,50 @@ exports.run = function (app) {
     app.put(appEndpoint, putHandler);
     app.delete(appEndpoint, deleteHandler);
 
+    //If Get we give out the list of Beacons
     function getHandler(req, res) {
-        res.send("Hello");
+        var beacons = exports.getBeacons();
+        res.send(beacons);
         console.log("GET called");
     }
 
+    //If Post we add a new Project Beacon
     function postHandler(req, res) {
+        var beacon = new Beacon(req.body.UUID, req.body.location);
+        exports.addBeacon(beacon);
+        res.send("Beacon added to the Project");
         console.log("POST called");
     }
 
+    //If Put just add a new User to a Beacon
     function putHandler(req, res) {
+        var UUID = req.body.UUID;
+        var beacon = exports.getBeacon(UUID);
+        if(beacon) {
+            beacon.addUserCount();
+            if(beacon.count >= beacon.capacity){
+                mqttManager.publishMaxCapacity(beacon.topic, mqtt);
+            }
+            res.send("User succesfully added to beacon:"+beacon.UUID);
+        }else{
+            res.send("UUID is not present as one of our Project Beacons");
+        }
         console.log("PUT called");
     }
 
+    // If Delete remove a user from Beacon
     function deleteHandler(req, res) {
+        var UUID = req.body.UUID;
+        var beacon = exports.getBeacon(UUID);
+        if(beacon) {
+            beacon.count = beacon.count-1;
+            if(beacon.count >= beacon.capacity){
+                mqttManager.publishMaxCapacity(beacon.topic, mqtt);
+            }
+            res.send("User succesfully removed from beacon:"+beacon.UUID);
+        }else{
+            res.send("UUID is not present as one of our Project Beacons");
+        }
         console.log("DELETE called");
     }
 };
@@ -41,7 +71,7 @@ exports.run = function (app) {
 //In case a Client Requests the list of Beacons
 exports.getBeacons = function(){
     return beaconsList;
-}
+};
 
 exports.getBeacon = function(UUID){
     for(var beacon of beaconsList){
@@ -49,7 +79,7 @@ exports.getBeacon = function(UUID){
             return beacon;
     }
     return null;
-}
+};
 
 exports.getBeaconByTopic = function(topic){
     for(var beacon of beaconsList){
@@ -57,7 +87,7 @@ exports.getBeaconByTopic = function(topic){
             return beacon;
     }
     return null;
-}
+};
 
 exports.addBeacon = function(beacon){
     if(beacon.constructor.name != "Beacon")
@@ -65,17 +95,11 @@ exports.addBeacon = function(beacon){
     //If we don't have that Beacon yet
     if(!exports.getBeacon(beacon.UUID))
         beaconsList.push(beacon);
-}
-var be = new Beacon("1234", "lat:1234, long:2345");
-be.topic = "position1";
-be.addUserCount();
-be.addUserCount();
-be.addUserCount();
-be.addUserCount();
-be.addUserCount();
-be.addUserCount();
-be.addUserCount();
-beaconsList.push(be);
+};
+
+
+
+
 
 // Tests
 exports.test = function(){
@@ -90,5 +114,5 @@ exports.test = function(){
     console.log(exports.getBeacons());
     console.log("----------------------------");
     console.log(exports.getBeacon("1234"));
-}   
+};
 // exports.test();

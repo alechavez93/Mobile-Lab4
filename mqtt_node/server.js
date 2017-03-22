@@ -16,9 +16,11 @@ var conf      = require(path.join(__dirname, 'config'));
 var internals = require(path.join(__dirname, 'internals'));
 
 var api = require("./appAPI");
+var Beacon = require("./Beacon");
 var mqttManager = require("./mqtt");
 
 // -- Setup the application
+setupBeacons();
 api.run(app);
 setupExpress();
 setupSocket();
@@ -129,37 +131,84 @@ function setupSocket() {
 
 	// Setup the internals
 	internals.start(mqtt => {
-		//Initialize API with mqtt objetc
+		//Initialize API with mqtt object
 		api.init(mqtt);
 		
 		io.on('connection', socket => {
-			socket_handler(socket, mqtt)
+			socket_handler(socket, mqtt);
+			socket.on("request-beacons", function(data){
+				var beacons = api.getBeacons();
+				console.log(beacons);
+				socket.emit("send-beacons", beacons);
+			});
 		});
 
-	mqtt.on('published', (data, client) => {
-		 if (!client) return;
+        mqtt.on('subscribed', (topic, client)=>{
+            if (!client) return;
 
-		 var beacon = api.getBeaconByTopic(data.topic);
+            var beacon = api.getBeaconByTopic(topic);
 
-		if(beacon == null)return;
-		console.log(beacon);
-		 var mes = data.payload.toString();
+            if(!beacon)return;
 
-		 if(mes.includes("Up")){
-		 	var check = beacon.isFull();
+			if(beacon.isFull()){
+				mqttManager.publishMaxCapacity(topic,mqtt);
+			}
+		});
 
-		 	beacon.addCapacity();
+		mqtt.on('published', (data, client) => {
+			if (!client) return;
 
-			 if(!beacon.isFull() && check != beacon.isFull()){
-			 		console.log("HERE GOT DAM IT!!!");
-					mqttManager.publishOffMaxCapacity(data.topic,mqtt);
-				 }
-			 }
-			 console.log(beacon.payload);
+			 var beacon = api.getBeaconByTopic(data.topic);
+
+			 if(!beacon) return;
+			 
+			 var mes = data.payload.toString();
+
+			 if(mes.includes("Up")) {
+                 var check = beacon.isFull();
+
+                 beacon.addCapacity();
+
+                 if (!beacon.isFull() && check != beacon.isFull()) {
+
+                     mqttManager.publishOffMaxCapacity(data.topic, mqtt);
+                 }
+             }
 		});
 	});
 
 	server.listen(conf.PORT, conf.HOST, () => { 
 		console.log("Listening on: " + conf.HOST + ":" + conf.PORT);
 	});
+}
+
+
+function setupBeacons(){
+	//First Beacon is located in Marston Science Library
+	var MarstonLocation = "Lat:29.647984, Lon:-82.344002";
+	var beacon1UUID = "abcdef01234567890123456789012345";
+	var beacon1 = new Beacon(beacon1UUID, MarstonLocation);
+	beacon1.topic = mqttManager.topics[0];
+	api.addBeacon(beacon1);
+
+	//Second Beacon is located in Turlington
+	var TurlingtonLocation = "Lat:29.640422, Lon:-82.343012";
+    var beacon2UUID = "1111222233334444555566667777888a";
+	var beacon2 = new Beacon(beacon2UUID, TurlingtonLocation);
+    beacon2.topic = mqttManager.topics[1];
+    api.addBeacon(beacon2);
+
+	//Third Beacon is located at Satadium
+    var StadiumLocation = "Lat:29.649939, Lon:-82.348577";
+    var beacon3UUID = "3";
+    var beacon3 = new Beacon(beacon3UUID, StadiumLocation);
+    beacon3.topic = mqttManager.topics[2];
+    api.addBeacon(beacon3);
+
+    //Fourth Beacon is located at Library West
+    var LibraryWestLocation = "Lat:29.652017, Lon:-82.342889";
+    var beacon4UUID = "4";
+    var beacon4 = new Beacon(beacon4UUID, LibraryWestLocation);
+    beacon4.topic = mqttManager.topics[3];
+    api.addBeacon(beacon4);
 }

@@ -1,9 +1,4 @@
-package com.example.ale.beacontracker;
-
-import android.util.Log;
-
-import com.example.ale.beacontracker.Utility.Beacon;
-import com.example.ale.beacontracker.Utility.BeaconManager;
+package vladimirpc1985.beaconapp;
 
 import org.junit.Test;
 
@@ -17,7 +12,6 @@ import static org.junit.Assert.*;
 public class ExampleUnitTest {
     @Test
     public void addition_isCorrect() throws Exception {
-        BeaconManager manager = new BeaconManager();
-        manager.addProjectBeacon(new Beacon("12345"));
+        assertEquals(4, 2 + 2);
     }
 }

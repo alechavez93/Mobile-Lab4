@@ -25,3 +25,14 @@ function initMap() {
         });
     // }
 }
+
+
+var beaconList;
+var socket = io();
+socket.emit("request-beacons", {});
+
+socket.on("send-beacons", function(data){
+    console.log("here");
+    console.log(data);
+    beaconList = data;
+});
