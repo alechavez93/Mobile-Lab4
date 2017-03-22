@@ -19,11 +19,21 @@ var api = require("./appAPI");
 var Beacon = require("./Beacon");
 var mqttManager = require("./mqtt");
 
+var socketList = [];
+
+// Middleware
+var bodyParser = require('body-parser');
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
 // -- Setup the application
 setupBeacons();
 api.run(app);
 setupExpress();
 setupSocket();
+
+
+
 
 //NOTE: to use mqttManage just call mqttManage.publishMaxCapacity(topic, mqtt) wherever you need it =)
 
@@ -135,10 +145,11 @@ function setupSocket() {
 		api.init(mqtt);
 		
 		io.on('connection', socket => {
+			//Save socket
+			socketList.push(socket);
 			socket_handler(socket, mqtt);
 			socket.on("request-beacons", function(data){
 				var beacons = api.getBeacons();
-				console.log(beacons);
 				socket.emit("send-beacons", beacons);
 			});
 		});
@@ -149,33 +160,41 @@ function setupSocket() {
 	});
 }
 
-
+//Sets up the Beacons for our Project
+//Their Locations, Topics, and UUID's
 function setupBeacons(){
 	//First Beacon is located in Marston Science Library
-	var MarstonLocation = "Lat:29.647984, Lon:-82.344002";
+	var MarstonLocation = {lat: 29.647984, lng: -82.344002};
 	var beacon1UUID = "abcdef01234567890123456789012345";
 	var beacon1 = new Beacon(beacon1UUID, MarstonLocation);
 	beacon1.topic = mqttManager.topics[0];
 	api.addBeacon(beacon1);
 
 	//Second Beacon is located in Turlington
-	var TurlingtonLocation = "Lat:29.640422, Lon:-82.343012";
+	var TurlingtonLocation = {lat: 29.649277, lng: -82.343901};
     var beacon2UUID = "1111222233334444555566667777888a";
 	var beacon2 = new Beacon(beacon2UUID, TurlingtonLocation);
     beacon2.topic = mqttManager.topics[1];
     api.addBeacon(beacon2);
 
 	//Third Beacon is located at Satadium
-    var StadiumLocation = "Lat:29.649939, Lon:-82.348577";
-    var beacon3UUID = "3";
+    var StadiumLocation = {lat: 29.649939, lng: -82.348577};
+    var beacon3UUID = "8b0ca750e7a74e14bd99095477cb3e77";
     var beacon3 = new Beacon(beacon3UUID, StadiumLocation);
     beacon3.topic = mqttManager.topics[2];
     api.addBeacon(beacon3);
 
     //Fourth Beacon is located at Library West
-    var LibraryWestLocation = "Lat:29.652017, Lon:-82.342889";
-    var beacon4UUID = "4";
+    var LibraryWestLocation = {lat: 29.652017, lng: -82.342889};
+    var beacon4UUID = "56789012345678901234567890123456";
     var beacon4 = new Beacon(beacon4UUID, LibraryWestLocation);
     beacon4.topic = mqttManager.topics[3];
     api.addBeacon(beacon4);
+}
+
+exports.sendBeaconUpdate = function(){
+	for(var socket of socketList){
+        var beacons = api.getBeacons();
+        socket.emit("update-beacons", beacons);
+	}
 }

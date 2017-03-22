@@ -21,6 +21,10 @@ class Beacon{
     //Setters
     set capacity(value) { this._capacity = value; }
     set topic(value) { this._topic = value; }
-    addUserCount() { this._count++ };
+    addUserCount() { this._count++; };
+    decreaseUserCount() {
+        if(this._count > 0)
+            this._count--;
+    };
     addCapacity() { this._capacity++ };
 }

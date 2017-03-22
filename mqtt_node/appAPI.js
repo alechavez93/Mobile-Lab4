@@ -7,8 +7,12 @@ const appEndpoint = "/beaconTracker";
 var mqttManager = require("./mqtt");
 var mqtt;
 
+//Server to update sockets
+var server = require("./server");
+
 exports.init = function(externalMqtt){
     mqtt = externalMqtt;
+    console.log("mqtt: "+externalMqtt);
 };
 
 
@@ -49,13 +53,14 @@ exports.run = function (app) {
             res.send("UUID is not present as one of our Project Beacons");
         }
         console.log("PUT called");
+        server.sendBeaconUpdate();
     }
 
     function deleteHandler(req, res) {
         var UUID = req.body.UUID;
         var beacon = exports.getBeacon(UUID);
         if(beacon) {
-            beacon.count = beacon.count-1;
+            beacon.decreaseUserCount();
             if(beacon.count >= beacon.capacity){
                 mqttManager.publishMaxCapacity(beacon.topic, mqtt);
             }
@@ -64,6 +69,7 @@ exports.run = function (app) {
             res.send("UUID is not present as one of our Project Beacons");
         }
         console.log("DELETE called");
+        server.sendBeaconUpdate();
     }
 };
 
