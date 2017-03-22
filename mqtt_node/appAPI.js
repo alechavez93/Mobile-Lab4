@@ -56,6 +56,7 @@ exports.run = function (app) {
         server.sendBeaconUpdate();
     }
 
+    // If Delete remove a user from Beacon
     function deleteHandler(req, res) {
         var UUID = req.body.UUID;
         var beacon = exports.getBeacon(UUID);
@@ -101,6 +102,8 @@ exports.addBeacon = function(beacon){
     if(!exports.getBeacon(beacon.UUID))
         beaconsList.push(beacon);
 };
+
+
 
 
 

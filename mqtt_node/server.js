@@ -153,6 +153,39 @@ function setupSocket() {
 				socket.emit("send-beacons", beacons);
 			});
 		});
+
+        mqtt.on('subscribed', (topic, client)=>{
+            if (!client) return;
+
+            var beacon = api.getBeaconByTopic(topic);
+
+            if(!beacon)return;
+
+			if(beacon.isFull()){
+				mqttManager.publishMaxCapacity(topic,mqtt);
+			}
+		});
+
+		mqtt.on('published', (data, client) => {
+			if (!client) return;
+
+			 var beacon = api.getBeaconByTopic(data.topic);
+
+			 if(!beacon) return;
+			 
+			 var mes = data.payload.toString();
+
+			 if(mes.includes("Up")) {
+                 var check = beacon.isFull();
+
+                 beacon.addCapacity();
+
+                 if (!beacon.isFull() && check != beacon.isFull()) {
+
+                     mqttManager.publishOffMaxCapacity(data.topic, mqtt);
+                 }
+             }
+		});
 	});
 
 	server.listen(conf.PORT, conf.HOST, () => { 
