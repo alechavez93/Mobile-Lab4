@@ -17,6 +17,7 @@ class Beacon{
     get count() { return this._count; }
     get capacity() { return this._capacity; }
     get topic() { return this._topic }
+    isFull(){return this._count === this._capacity;}
 
     //Setters
     set capacity(value) { this._capacity = value; }

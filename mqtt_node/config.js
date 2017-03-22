@@ -6,7 +6,7 @@
 var path = require('path');
 
 module.exports = {
-	HOST: '127.0.0.1',
+	HOST: '10.136.28.112',
 	PORT: '8080',
 
 	// Variables used internally

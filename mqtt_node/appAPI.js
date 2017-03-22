@@ -66,8 +66,16 @@ exports.addBeacon = function(beacon){
     if(!exports.getBeacon(beacon.UUID))
         beaconsList.push(beacon);
 }
-
-
+var be = new Beacon("1234", "lat:1234, long:2345");
+be.topic = "position1";
+be.addUserCount();
+be.addUserCount();
+be.addUserCount();
+be.addUserCount();
+be.addUserCount();
+be.addUserCount();
+be.addUserCount();
+beaconsList.push(be);
 
 // Tests
 exports.test = function(){

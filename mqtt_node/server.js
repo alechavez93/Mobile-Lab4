@@ -135,6 +135,28 @@ function setupSocket() {
 		io.on('connection', socket => {
 			socket_handler(socket, mqtt)
 		});
+
+	mqtt.on('published', (data, client) => {
+		 if (!client) return;
+
+		 var beacon = api.getBeaconByTopic(data.topic);
+
+		if(beacon == null)return;
+		console.log(beacon);
+		 var mes = data.payload.toString();
+
+		 if(mes.includes("Up")){
+		 	var check = beacon.isFull();
+
+		 	beacon.addCapacity();
+
+			 if(!beacon.isFull() && check != beacon.isFull()){
+			 		console.log("HERE GOT DAM IT!!!");
+					mqttManager.publishOffMaxCapacity(data.topic,mqtt);
+				 }
+			 }
+			 console.log(beacon.payload);
+		});
 	});
 
 	server.listen(conf.PORT, conf.HOST, () => { 
